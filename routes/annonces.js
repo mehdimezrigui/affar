@@ -93,20 +93,20 @@ router.delete(
 );
 
 
-// @route   /annonce/participate/:id
+// @route   /participate/:id
 // @desc    Add patrticipate to Annonce
 // @access  Private
 router.post(
   '/participate/:id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
-    const { errors, isValid } = validateAnnonceInput(req.body);
 
-    // Check Validation
-    if (!isValid) {
-      // If any errors, send 400 with errors object
-      return res.status(400).json(errors);
-    }
+    // const { errors, isValid } = validateAnnonceInput(req.body);
+    // // Check Validation
+    // if (!isValid) {
+    //   // If any errors, send 400 with errors object
+    //   return res.status(400).json(errors);
+    // }
 
     Annonce.findById(req.params.id)
       .then(Annonce => {
@@ -115,21 +115,21 @@ router.post(
           user: req.user.id
         };
 
-        // Add to comments array
+        // Add to participate array
         Annonce.participation.unshift(newPart);
 
         // Save
-        Annonce.save().then(Annonce => res.json(Annonce));
+        Annonce.save().then(annonce => res.json(annonce));
       })
       .catch(err => res.status(404).json({ annoncenotfound: 'No Annonce found' }));
   }
 );
 
-// @route   DELETE /annonce/participate/:id/:part_id
+// @route   DELETE /participate/:id/:part_id
 // @desc    Remove participation from Annonce
 // @access  Private
 router.delete(
-  '/annonce/participate/:id/:part_id',
+  '/participate/:id/:part_id',
   passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Annonce.findById(req.params.id)
